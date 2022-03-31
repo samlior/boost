@@ -43,7 +43,7 @@
 #if !defined(BOOST_LOG_WITHOUT_DEFAULT_FACTORIES)
 #include "default_filter_factory.hpp"
 #endif
-#include "../spirit_encoding.hpp"
+#include "spirit_encoding.hpp"
 #include <boost/log/detail/header.hpp>
 
 namespace boost {

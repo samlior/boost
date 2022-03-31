@@ -39,7 +39,7 @@
 #include <boost/log/detail/light_rw_mutex.hpp>
 #endif
 #include "parser_utils.hpp"
-#include "../spirit_encoding.hpp"
+#include "spirit_encoding.hpp"
 #if !defined(BOOST_LOG_WITHOUT_DEFAULT_FACTORIES)
 #include "default_formatter_factory.hpp"
 #endif

@@ -1,5 +1,8 @@
 ﻿cmake_minimum_required(VERSION 3.2)
+
 project(Boost)
+
+find_package(MPI)
 
 include(CMakeDetermineASMCompiler)
 
@@ -9,626 +12,148 @@ else()
 ENABLE_LANGUAGE(ASM)
 endif()
 
-find_package(Threads)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${MPI_INCLUDE_PATH})
 
-SET(BOOST_ATOMIC_SRC libs/atomic/src/lockpool.cpp)
-
-set(BOOST_SERIALIZATION_SRC
-  libs/serialization/src/archive_exception.cpp
-  libs/serialization/src/basic_archive.cpp
-  libs/serialization/src/basic_iarchive.cpp
-  libs/serialization/src/basic_iserializer.cpp
-  libs/serialization/src/basic_oarchive.cpp
-  libs/serialization/src/basic_oserializer.cpp
-  libs/serialization/src/basic_pointer_iserializer.cpp
-  libs/serialization/src/basic_pointer_oserializer.cpp
-  libs/serialization/src/basic_serializer_map.cpp
-  libs/serialization/src/basic_text_iprimitive.cpp
-  libs/serialization/src/basic_text_oprimitive.cpp
-  libs/serialization/src/basic_xml_archive.cpp
-  libs/serialization/src/binary_iarchive.cpp
-  libs/serialization/src/binary_oarchive.cpp
-  libs/serialization/src/extended_type_info_no_rtti.cpp
-  libs/serialization/src/extended_type_info_typeid.cpp
-  libs/serialization/src/extended_type_info.cpp
-  libs/serialization/src/polymorphic_iarchive.cpp
-  libs/serialization/src/polymorphic_oarchive.cpp
-  libs/serialization/src/polymorphic_text_iarchive.cpp
-  libs/serialization/src/polymorphic_text_oarchive.cpp
-  libs/serialization/src/stl_port.cpp
-  libs/serialization/src/text_iarchive.cpp
-  libs/serialization/src/text_oarchive.cpp
-  libs/serialization/src/void_cast.cpp
-  libs/serialization/src/xml_archive_exception.cpp
-  libs/serialization/src/xml_iarchive.cpp
-  libs/serialization/src/xml_oarchive.cpp
-  libs/serialization/src/xml_grammar.cpp
-  libs/serialization/src/utf8_codecvt_facet.cpp
-  libs/serialization/src/basic_xml_grammar.ipp # doesn't show up in "Source Files" in Xcode"'
-)
-
-set(BOOST_LOG_SRC
-	libs/log/src/attribute_name.cpp
-	libs/log/src/attribute_set.cpp
-	libs/log/src/attribute_value_set.cpp
-	libs/log/src/code_conversion.cpp
-	libs/log/src/core.cpp
-	libs/log/src/date_time_format_parser.cpp
-	libs/log/src/default_attribute_names.cpp
-	libs/log/src/default_sink.cpp
-	libs/log/src/dump.cpp
-	libs/log/src/dump_avx2.cpp
-	libs/log/src/dump_ssse3.cpp
-	libs/log/src/event.cpp
-	libs/log/src/exceptions.cpp
-	libs/log/src/format_parser.cpp
-	libs/log/src/global_logger_storage.cpp
-	libs/log/src/named_scope.cpp
-	libs/log/src/named_scope_format_parser.cpp
-	libs/log/src/once_block.cpp
-	libs/log/src/permissions.cpp
-	libs/log/src/process_id.cpp
-	libs/log/src/process_name.cpp
-	libs/log/src/record_ostream.cpp
-	libs/log/src/setup/default_filter_factory.cpp
-	libs/log/src/setup/default_formatter_factory.cpp
-	libs/log/src/setup/filter_parser.cpp
-	libs/log/src/setup/formatter_parser.cpp
-	libs/log/src/setup/init_from_settings.cpp
-	libs/log/src/setup/init_from_stream.cpp
-	libs/log/src/setup/matches_relation_factory.cpp
-	libs/log/src/setup/parser_utils.cpp
-	libs/log/src/setup/settings_parser.cpp
-	libs/log/src/severity_level.cpp
-	libs/log/src/spirit_encoding.cpp
-	libs/log/src/syslog_backend.cpp
-	libs/log/src/text_file_backend.cpp
-	libs/log/src/text_multifile_backend.cpp
-	libs/log/src/text_ostream_backend.cpp
-	libs/log/src/thread_id.cpp
-	libs/log/src/thread_specific.cpp
-	libs/log/src/threadsafe_queue.cpp
-	libs/log/src/timer.cpp
-	libs/log/src/timestamp.cpp
-	libs/log/src/trivial.cpp
-)
-
-if(WIN32)
-	list(APPEND BOOST_LOG_SRC libs/log/src/windows/debug_output_backend.cpp)
-	list(APPEND BOOST_LOG_SRC libs/log/src/windows/event_log_backend.cpp)
-	list(APPEND BOOST_LOG_SRC libs/log/src/windows/ipc_reliable_message_queue.cpp)
-	list(APPEND BOOST_LOG_SRC libs/log/src/windows/ipc_sync_wrappers.cpp)
-	list(APPEND BOOST_LOG_SRC libs/log/src/windows/light_rw_mutex.cpp)
-	list(APPEND BOOST_LOG_SRC libs/log/src/windows/mapped_shared_memory.cpp)
-	list(APPEND BOOST_LOG_SRC libs/log/src/windows/object_name.cpp)
-else()
-	list(APPEND BOOST_LOG_SRC libs/log/src/posix/ipc_reliable_message_queue.cpp)
-	list(APPEND BOOST_LOG_SRC libs/log/src/posix/object_name.cpp)
-endif()
-
-set(BOOST_REGEX_SRC
-	libs/regex/src/regex.cpp
-	libs/regex/src/regex_traits_defaults.cpp
-	libs/regex/src/wide_posix_api.cpp
-	libs/regex/src/w32_regex_traits.cpp
-	libs/regex/src/usinstances.cpp
-	libs/regex/src/regex_debug.cpp
-	libs/regex/src/instances.cpp
-	libs/regex/src/fileiter.cpp
-	libs/regex/src/cpp_regex_traits.cpp
-	libs/regex/src/winstances.cpp
-	libs/regex/src/wc_regex_traits.cpp
-	libs/regex/src/posix_api.cpp
-	libs/regex/src/regex_raw_buffer.cpp
-	libs/regex/src/static_mutex.cpp
-	libs/regex/src/internals.hpp
-	libs/regex/src/c_regex_traits.cpp
-	libs/regex/src/icu.cpp
-	libs/regex/src/cregex.cpp
-)
-
-if(WIN32)
-	set(BOOST_THREAD_SRC
-		libs/thread/src/future.cpp
-		libs/thread/src/win32/tss_dll.cpp
-		libs/thread/src/win32/thread.cpp
-		libs/thread/src/win32/tss_pe.cpp
-	)
-else()
-	set(BOOST_THREAD_SRC
-		libs/thread/src/future.cpp
-		libs/thread/src/pthread/once.cpp
-		libs/thread/src/pthread/thread.cpp
-		libs/thread/src/pthread/once_atomic.cpp
-	)
-endif()
-
-set(BOOST_CHRONO_SRC
-	libs/chrono/src/chrono.cpp
-	libs/chrono/src/thread_clock.cpp
-	libs/chrono/src/process_cpu_clocks.cpp
-)
-
-set(BOOST_CONTEXT_SRC
-	libs/context/src/dummy.cpp
-	libs/context/src/continuation.cpp
-#	libs/context/src/fiber.cpp
-)
-
-if(WIN32)
-	list(APPEND BOOST_CONTEXT_SRC libs/context/src/windows/stack_traits.cpp)
-	set(ASSEMBLER masm)
-	set(ASM_FILE_EXT "asm")
-	set(EXEUCTABLEFORMAT "pe")
-	set(SYSABI "ms")
-
-	if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-		set(ARCH "x86_64")
-	else()
-		set(ARCH "i386")
-	endif()
-
-else()
-	set(ASSEMBLER gas)
-	set(ASM_FILE_EXT "S")
-
-	if (APPLE)
-		set(EXEUCTABLEFORMAT "macho")
-	else()
-		set(EXEUCTABLEFORMAT "elf")
-	endif()
-
-	list(APPEND BOOST_CONTEXT_SRC libs/context/src/posix/stack_traits.cpp)
-
-	if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "x86")
-		set(SYSABI "sysv")
-		if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-			set(ARCH "x86_64")
-		else()
-			set(ARCH "i386")
-		endif()
-	elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "^arm")
-		set(SYSABI "aapcs")
-		if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-			set(ARCH "arm64")
-		else()
-			set(ARCH "arm")
-		endif()
-	elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "aarch64")
-		set(SYSABI "aapcs")
-		set(ARCH "arm64")
-	endif()
-endif()
-
-list(APPEND BOOST_CONTEXT_SRC libs/context/src/asm/jump_${ARCH}_${SYSABI}_${EXEUCTABLEFORMAT}_${ASSEMBLER}.${ASM_FILE_EXT})
-list(APPEND BOOST_CONTEXT_SRC libs/context/src/asm/make_${ARCH}_${SYSABI}_${EXEUCTABLEFORMAT}_${ASSEMBLER}.${ASM_FILE_EXT})
-list(APPEND BOOST_CONTEXT_SRC libs/context/src/asm/ontop_${ARCH}_${SYSABI}_${EXEUCTABLEFORMAT}_${ASSEMBLER}.${ASM_FILE_EXT})
-
-set(BOOST_COROUTINE_SRC
-	libs/coroutine/src/detail/coroutine_context.cpp
-	libs/coroutine/src/exceptions.cpp
-)
-
-if(WIN32)
-	list(APPEND BOOST_COROUTINE_SRC libs/coroutine/src/windows/stack_traits.cpp)
-else()
-	list(APPEND BOOST_COROUTINE_SRC libs/coroutine/src/posix/stack_traits.cpp)
-endif()
-
-set(BOOST_DATE_TIME_SRC
-
-	libs/date_time/src/posix_time/posix_time_types.cpp
-	libs/date_time/src/gregorian/greg_weekday.cpp
-	libs/date_time/src/gregorian/gregorian_types.cpp
-	libs/date_time/src/gregorian/greg_month.cpp
-	libs/date_time/src/gregorian/date_generators.cpp
-	libs/date_time/src/gregorian/greg_names.hpp
-)
-
-set(BOOST_EXCEPTION_SRC libs/exception/src/clone_current_exception_non_intrusive.cpp)
-
-set(BOOST_FILESYSTEM_SRC
-	libs/filesystem/src/directory.cpp
-	libs/filesystem/src/exception.cpp
-	libs/filesystem/src/path_traits.cpp
-	libs/filesystem/src/operations.cpp
-	libs/filesystem/src/unique_path.cpp
-	libs/filesystem/src/utf8_codecvt_facet.cpp
-	libs/filesystem/src/windows_file_codecvt.hpp
-	libs/filesystem/src/codecvt_error_category.cpp
-	libs/filesystem/src/path.cpp
-	libs/filesystem/src/windows_file_codecvt.cpp
-	libs/filesystem/src/portability.cpp
-)
-
-set(BOOST_LOCALE_SRC
-	libs/locale/src/encoding/codepage.cpp
-	libs/locale/src/shared/date_time.cpp
-	libs/locale/src/shared/generator.cpp
-	libs/locale/src/shared/message.cpp
-	libs/locale/src/shared/format.cpp
-	libs/locale/src/shared/ids.cpp
-	libs/locale/src/shared/mo_lambda.cpp
-	libs/locale/src/shared/formatting.cpp
-	libs/locale/src/shared/localization_backend.cpp
-	libs/locale/src/std/collate.cpp
-	libs/locale/src/std/numeric.cpp
-	libs/locale/src/std/all_generator.hpp
-	libs/locale/src/std/codecvt.cpp
-	libs/locale/src/std/std_backend.cpp
-	libs/locale/src/std/std_backend.hpp
-	libs/locale/src/std/converter.cpp
-	libs/locale/src/util/locale_data.cpp
-	libs/locale/src/util/default_locale.cpp
-	libs/locale/src/util/locale_data.hpp
-	libs/locale/src/util/numeric.hpp
-	libs/locale/src/util/info.cpp
-	libs/locale/src/util/codecvt_converter.cpp
-	libs/locale/src/util/timezone.hpp
-	libs/locale/src/util/gregorian.hpp
-	libs/locale/src/util/gregorian.cpp
-	libs/locale/src/util/iconv.hpp
-)
-
-if (WIN32)
-	list(APPEND BOOST_LOCALE_SRC
-		libs/locale/src/win32/collate.cpp
-		libs/locale/src/win32/lcid.cpp
-		libs/locale/src/win32/win_backend.cpp
-		libs/locale/src/win32/numeric.cpp
-		libs/locale/src/win32/win_backend.hpp
-		libs/locale/src/win32/api.hpp
-		libs/locale/src/win32/all_generator.hpp
-		libs/locale/src/win32/converter.cpp
-		libs/locale/src/win32/lcid.hpp
-	)
-else()
-	list(APPEND BOOST_LOCALE_SRC
-		libs/locale/src/posix/collate.cpp
-		libs/locale/src/posix/numeric.cpp
-		libs/locale/src/posix/posix_backend.cpp
-		libs/locale/src/posix/posix_backend.hpp
-		libs/locale/src/posix/all_generator.hpp
-		libs/locale/src/posix/codecvt.cpp
-		libs/locale/src/posix/converter.cpp
-		libs/locale/src/posix/codecvt.hpp
-	)
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions(-DBOOST_LOCALE_WITH_ICONV)
-endif()
-
-set(BOOST_PROGRAM_OPTIONS_SRC
-	libs/program_options/src/winmain.cpp
-	libs/program_options/src/value_semantic.cpp
-	libs/program_options/src/convert.cpp
-	libs/program_options/src/variables_map.cpp
-	libs/program_options/src/parsers.cpp
-	libs/program_options/src/options_description.cpp
-	libs/program_options/src/utf8_codecvt_facet.cpp
-	libs/program_options/src/split.cpp
-	libs/program_options/src/positional_options.cpp
-	libs/program_options/src/cmdline.cpp
-	libs/program_options/src/config_file.cpp
-)
-
-set(BOOST_TIMER_SRC
-	libs/timer/src/auto_timers_construction.cpp
-	libs/timer/src/cpu_timer.cpp
-)
-
-set(BOOST_RANDOM_SRC libs/random/src/random_device.cpp)
-
-set(BOOST_FIBER_SRC
-	libs/fiber/src/scheduler.cpp
-	libs/fiber/src/fiber.cpp
-	libs/fiber/src/properties.cpp
-	libs/fiber/src/future.cpp
-	libs/fiber/src/recursive_mutex.cpp
-	libs/fiber/src/context.cpp
-	libs/fiber/src/timed_mutex.cpp
-	libs/fiber/src/condition_variable.cpp
-	libs/fiber/src/algo/shared_work.cpp
-	libs/fiber/src/algo/algorithm.cpp
-	libs/fiber/src/algo/work_stealing.cpp
-	libs/fiber/src/algo/round_robin.cpp
-	libs/fiber/src/recursive_timed_mutex.cpp
-	libs/fiber/src/mutex.cpp
-	libs/fiber/src/barrier.cpp
-	libs/fiber/src/numa/algo/work_stealing.cpp
-	libs/fiber/src/numa/topology.cpp
-)
-
-if (WIN32)
-list(APPEND BOOST_FIBER_SRC
-	libs/fiber/src/numa/windows/topology.cpp
-	libs/fiber/src/numa/windows/pin_thread.cpp
-)
-elseif(FREEBSD)
-list(APPEND BOOST_FIBER_SRC
-	libs/fiber/src/numa/freebsd/topology.cpp
-	libs/fiber/src/numa/freebsd/pin_thread.cpp
-)
-elseif(LINUX)
-list(APPEND BOOST_FIBER_SRC
-	libs/fiber/src/numa/linux/topology.cpp
-	libs/fiber/src/numa/linux/pin_thread.cpp
-)
-endif()
-
-set(BOOST_SRCS ${BOOST_ATOMIC_SRC})
-
-add_library(boost_header INTERFACE)
-add_library(Boost::boost ALIAS boost_header)
-add_library(Boost::system ALIAS boost_header)
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_atomic_static STATIC ${BOOST_ATOMIC_SRC})
-add_library(Boost::atomic ALIAS boost_atomic_static)
-else()
-add_library(boost_atomic_dll SHARED ${BOOST_ATOMIC_SRC})
-add_library(Boost::atomic ALIAS boost_atomic_dll)
-endif()
-
-if(USE_BOOST_SERIALIZATION)
-	if(Boost_USE_STATIC_LIBS)
-		add_library(boost_serialization_static STATIC ${BOOST_SERIALIZATION_SRC})
-		add_library(Boost::serialization ALIAS boost_serialization_static)
-	else()
-		add_library(boost_serialization_dll SHARED ${BOOST_SERIALIZATION_SRC})
-		add_library(Boost::serialization ALIAS boost_serialization_dll)
-	endif()
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_log_static STATIC ${BOOST_LOG_SRC})
-add_library(Boost::log ALIAS boost_log_static)
-else()
-add_library(boost_log_dll SHARED ${BOOST_LOG_SRC})
-add_library(Boost::log ALIAS boost_log_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_thread_static STATIC ${BOOST_THREAD_SRC})
-add_library(Boost::thread ALIAS boost_thread_static)
-else()
-add_library(boost_thread_dll SHARED ${BOOST_THREAD_SRC})
-add_library(Boost::thread ALIAS boost_thread_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_context_static STATIC ${BOOST_CONTEXT_SRC})
-add_library(Boost::context ALIAS boost_context_static)
-else()
-add_library(boost_context_dll SHARED ${BOOST_CONTEXT_SRC})
-add_library(Boost::context ALIAS boost_context_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_coroutine_static STATIC ${BOOST_COROUTINE_SRC})
-add_library(Boost::coroutine ALIAS boost_coroutine_static)
-else()
-add_library(boost_coroutine_dll SHARED ${BOOST_COROUTINE_SRC})
-add_library(Boost::coroutine ALIAS boost_coroutine_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_chrono_static STATIC ${BOOST_CHRONO_SRC})
-add_library(Boost::chrono ALIAS boost_chrono_static)
-else()
-add_library(boost_chrono_dll SHARED ${BOOST_CHRONO_SRC})
-add_library(Boost::chrono ALIAS boost_chrono_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_filesystem_static STATIC ${BOOST_FILESYSTEM_SRC})
-add_library(Boost::filesystem ALIAS boost_filesystem_static)
-else()
-add_library(boost_filesystem_dll SHARED ${BOOST_FILESYSTEM_SRC})
-add_library(Boost::filesystem ALIAS boost_filesystem_dll)
-endif()
-
-if(USE_BOOST_LOCALE)
-	if(Boost_USE_STATIC_LIBS)
-		add_library(boost_locale_static STATIC ${BOOST_LOCALE_SRC})
-		add_library(Boost::locale ALIAS boost_locale_static)
-		if(WIN32)
-			target_compile_definitions(boost_locale_static PRIVATE -DBOOST_LOCALE_WITH_WCONV)
-		else()
-			target_compile_definitions(boost_locale_static PRIVATE -DBOOST_LOCALE_WITH_ICONV)
-		endif()
-	else()
-		add_library(boost_locale_dll SHARED ${BOOST_LOCALE_SRC})
-		add_library(Boost::locale ALIAS boost_locale_dll)
-
-		if(WIN32)
-			target_compile_definitions(boost_locale_dll PRIVATE -DBOOST_LOCALE_WITH_WCONV)
-		else()
-			target_compile_definitions(boost_locale_dll PRIVATE -DBOOST_LOCALE_WITH_ICONV)
-		endif()
-	endif()
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_date_time_static STATIC ${BOOST_DATE_TIME_SRC})
-add_library(Boost::date_time ALIAS boost_date_time_static)
-else()
-add_library(boost_date_time_dll SHARED ${BOOST_DATE_TIME_SRC})
-add_library(Boost::date_time ALIAS boost_date_time_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_regex_static STATIC ${BOOST_REGEX_SRC})
-add_library(Boost::regex ALIAS boost_regex_static)
-else()
-add_library(boost_regex_dll SHARED ${BOOST_REGEX_SRC})
-add_library(Boost::regex ALIAS boost_regex_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_timer_static STATIC ${BOOST_TIMER_SRC})
-add_library(Boost::timer ALIAS boost_timer_static)
-else()
-add_library(boost_timer_dll SHARED ${BOOST_TIMER_SRC})
-add_library(Boost::timer ALIAS boost_timer_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_exception_static STATIC ${BOOST_EXCEPTION_SRC})
-add_library(Boost::exception ALIAS boost_exception_static)
-else()
-add_library(boost_exception_dll SHARED ${BOOST_EXCEPTION_SRC})
-add_library(Boost::exception ALIAS boost_exception_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_random_static STATIC ${BOOST_RANDOM_SRC})
-add_library(Boost::random ALIAS boost_random_static)
-else()
-add_library(boost_random_dll SHARED ${BOOST_RANDOM_SRC})
-add_library(Boost::random ALIAS boost_random_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_program_options_static STATIC ${BOOST_PROGRAM_OPTIONS_SRC} )
-add_library(Boost::program_options ALIAS boost_program_options_static)
-else()
-add_library(boost_program_options_dll SHARED ${BOOST_PROGRAM_OPTIONS_SRC})
-add_library(Boost::program_options ALIAS boost_program_options_dll)
-endif()
-
-if(Boost_USE_STATIC_LIBS)
-add_library(boost_fiber_static STATIC ${BOOST_FIBER_SRC})
-add_library(Boost::fiber ALIAS boost_fiber_static)
-else()
-add_library(boost_fiber_dll SHARED ${BOOST_FIBER_SRC})
-add_library(Boost::fiber ALIAS boost_fiber_dll)
-endif()
-
-target_include_directories(boost_header INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-
-target_compile_definitions(boost_header INTERFACE -DBOOST_ALL_NO_LIB -DBOOST_ALL_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBOOST_FILESYSTEM_STATIC_LINK)
-target_compile_definitions(boost_thread_static PRIVATE -DBOOST_THREAD_BUILD_LIB)
-target_compile_definitions(boost_context_static PUBLIC -DBOOST_ALL_NO_LIB -DBOOST_ALL_STATIC_LINK)
-target_compile_definitions(boost_context_static PRIVATE -DBOOST_CONTEXT_EXPORT)
-
-if(Boost_USE_STATIC_LIBS)
-	target_link_libraries(boost_atomic_static boost_header)
-	if(USE_BOOST_SERIALIZATION)
-		target_link_libraries(boost_serialization_static boost_header)
-	endif()
-	target_link_libraries(boost_log_static boost_header boost_thread_static)
-	target_link_libraries(boost_filesystem_static boost_header)
-	target_link_libraries(boost_thread_static boost_header Threads::Threads)
-	target_link_libraries(boost_context_static boost_header)
-	target_link_libraries(boost_fiber_static boost_context_static boost_header)
-	target_link_libraries(boost_coroutine_static boost_context_static boost_header)
-	target_link_libraries(boost_chrono_static boost_header)
-	if(USE_BOOST_LOCALE)
-		target_link_libraries(boost_locale_static boost_header)
-	endif()
-	target_link_libraries(boost_date_time_static boost_chrono_static boost_header)
-	target_link_libraries(boost_regex_static boost_header)
-	target_link_libraries(boost_timer_static boost_chrono_static boost_header)
-	target_link_libraries(boost_exception_static boost_header)
-	target_link_libraries(boost_random_static boost_header)
-	target_link_libraries(boost_program_options_static boost_filesystem_static boost_header)
-else()
-	target_link_libraries(boost_atomic_dll boost_header)
-	if(USE_BOOST_SERIALIZATION)
-		target_link_libraries(boost_serialization_dll boost_header)
-	endif()
-	target_link_libraries(boost_log_dll boost_header boost_thread_dll)
-	target_link_libraries(boost_filesystem_dll boost_header)
-	target_link_libraries(boost_thread_dll boost_header Threads::Threads)
-	target_link_libraries(boost_context_dll boost_header)
-	target_link_libraries(boost_coroutine_dll boost_context_static boost_header)
-	target_link_libraries(boost_fiber_dll boost_context_static boost_header)
-	target_link_libraries(boost_chrono_dll boost_header)
-	if(USE_BOOST_LOCALE)
-		target_link_libraries(boost_locale_dll boost_header)
-	endif()
-	target_link_libraries(boost_date_time_dll boost_chrono_static boost_header)
-	target_link_libraries(boost_regex_dll boost_header)
-	target_link_libraries(boost_timer_dll boost_chrono_static boost_header)
-	target_link_libraries(boost_exception_dll boost_header)
-	target_link_libraries(boost_random_dll boost_header)
-	target_link_libraries(boost_program_options_dll boost_filesystem_static boost_header)
-endif()
-
-if(WIN32)
-	target_compile_definitions(boost_header INTERFACE -DWIN32_LEAN_AND_MEAN -DNOMINMAX)
-	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-		target_compile_definitions(boost_header INTERFACE -DBOOST_SP_USE_STD_ATOMIC -DBOOST_USE_WINDOWS_H)
-		set_property(SOURCE libs/locale/src/shared/message.cpp APPEND PROPERTY CMAKE_CXX_FLAGS "-O0")
-	endif()
-	target_compile_definitions(boost_context_static PUBLIC -DBOOST_USE_WINFIB)
-	target_compile_definitions(boost_log_static PRIVATE -DSECURITY_WIN32)
-else()
-	target_compile_definitions(boost_context_static PRIVATE -DBOOST_USE_UCONTEXT)
-endif()
-
-set(BOOST_LIBRARIES
-	Boost::boost
-	Boost::serialization
-	Boost::atomic
-	Boost::log
-	Boost::context
-	Boost::fiber
-	Boost::coroutine
-	Boost::chrono
-	Boost::date_time
-	Boost::regex
-	Boost::timer
-	Boost::exception
-	Boost::filesystem
-	Boost::thread
-	Boost::random
-	Boost::program_options
-	Boost::locale
-PARENT_SCOPE)
-
-if(Boost_USE_STATIC_LIBS)
-	set_target_properties(boost_atomic_static PROPERTIES FOLDER "third_party/boost")
-	if(USE_BOOST_SERIALIZATION)
-		set_target_properties(boost_serialization_static PROPERTIES FOLDER "third_party/boost")
-	endif()
-	set_target_properties(boost_log_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_filesystem_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_thread_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_context_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_fiber_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_coroutine_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_chrono_static PROPERTIES FOLDER "third_party/boost")
-	if(USE_BOOST_LOCALE)
-		set_target_properties(boost_locale_static PROPERTIES FOLDER "third_party/boost")
-	endif()
-	set_target_properties(boost_date_time_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_regex_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_timer_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_exception_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_random_static PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_program_options_static PROPERTIES FOLDER "third_party/boost")
-else()
-	set_target_properties(boost_atomic_dll PROPERTIES FOLDER "third_party/boost")
-	if(USE_BOOST_SERIALIZATION)
-		set_target_properties(boost_serialization_dll PROPERTIES FOLDER "third_party/boost")
-	endif()
-	set_target_properties(boost_log_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_filesystem_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_thread_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_context_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_fiber_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_coroutine_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_chrono_dll PROPERTIES FOLDER "third_party/boost")
-	if(USE_BOOST_LOCALE)
-		set_target_properties(boost_locale_dll PROPERTIES FOLDER "third_party/boost")
-	endif()
-	set_target_properties(boost_date_time_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_regex_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_timer_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_exception_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_random_dll PROPERTIES FOLDER "third_party/boost")
-	set_target_properties(boost_program_options_dll PROPERTIES FOLDER "third_party/boost")
-endif()
+add_subdirectory(libs/accumulators)
+add_subdirectory(libs/algorithm)
+add_subdirectory(libs/align)
+add_subdirectory(libs/any)
+add_subdirectory(libs/array)
+add_subdirectory(libs/asio)
+add_subdirectory(libs/assert)
+add_subdirectory(libs/assign)
+add_subdirectory(libs/atomic)
+add_subdirectory(libs/beast)
+add_subdirectory(libs/bimap)
+add_subdirectory(libs/bind)
+add_subdirectory(libs/callable_traits)
+add_subdirectory(libs/chrono)
+add_subdirectory(libs/circular_buffer)
+add_subdirectory(libs/compatibility)
+add_subdirectory(libs/compute)
+add_subdirectory(libs/concept_check)
+add_subdirectory(libs/config)
+add_subdirectory(libs/container)
+add_subdirectory(libs/container_hash)
+add_subdirectory(libs/context)
+add_subdirectory(libs/contract)
+add_subdirectory(libs/conversion)
+add_subdirectory(libs/convert)
+add_subdirectory(libs/core)
+add_subdirectory(libs/coroutine)
+add_subdirectory(libs/coroutine2)
+add_subdirectory(libs/crc)
+add_subdirectory(libs/date_time)
+add_subdirectory(libs/describe)
+add_subdirectory(libs/detail)
+add_subdirectory(libs/dll)
+add_subdirectory(libs/dynamic_bitset)
+add_subdirectory(libs/endian)
+add_subdirectory(libs/exception)
+add_subdirectory(libs/fiber)
+add_subdirectory(libs/filesystem)
+add_subdirectory(libs/flyweight)
+add_subdirectory(libs/foreach)
+add_subdirectory(libs/format)
+add_subdirectory(libs/function)
+add_subdirectory(libs/function_types)
+add_subdirectory(libs/functional)
+add_subdirectory(libs/fusion)
+add_subdirectory(libs/geometry)
+add_subdirectory(libs/gil)
+add_subdirectory(libs/graph)
+add_subdirectory(libs/graph_parallel)
+add_subdirectory(libs/hana)
+add_subdirectory(libs/heap)
+add_subdirectory(libs/histogram)
+add_subdirectory(libs/hof)
+add_subdirectory(libs/icl)
+add_subdirectory(libs/integer)
+add_subdirectory(libs/interprocess)
+add_subdirectory(libs/intrusive)
+add_subdirectory(libs/io)
+add_subdirectory(libs/iostreams)
+add_subdirectory(libs/iterator)
+add_subdirectory(libs/json)
+add_subdirectory(libs/lambda)
+add_subdirectory(libs/lambda2)
+add_subdirectory(libs/leaf)
+add_subdirectory(libs/lexical_cast)
+add_subdirectory(libs/local_function)
+add_subdirectory(libs/locale)
+add_subdirectory(libs/lockfree)
+add_subdirectory(libs/log)
+add_subdirectory(libs/logic)
+add_subdirectory(libs/math)
+add_subdirectory(libs/metaparse)
+add_subdirectory(libs/move)
+add_subdirectory(libs/mp11)
+add_subdirectory(libs/mpi)
+add_subdirectory(libs/mpl)
+add_subdirectory(libs/msm)
+add_subdirectory(libs/multi_array)
+add_subdirectory(libs/multi_index)
+add_subdirectory(libs/multiprecision)
+add_subdirectory(libs/nowide)
+add_subdirectory(libs/numeric/conversion)
+add_subdirectory(libs/numeric/interval)
+add_subdirectory(libs/optional)
+add_subdirectory(libs/outcome)
+add_subdirectory(libs/parameter)
+add_subdirectory(libs/parameter_python)
+add_subdirectory(libs/pfr)
+add_subdirectory(libs/phoenix)
+add_subdirectory(libs/poly_collection)
+add_subdirectory(libs/polygon)
+add_subdirectory(libs/pool)
+add_subdirectory(libs/predef)
+add_subdirectory(libs/preprocessor)
+add_subdirectory(libs/process)
+add_subdirectory(libs/program_options)
+add_subdirectory(libs/property_map)
+add_subdirectory(libs/property_map_parallel)
+add_subdirectory(libs/property_tree)
+add_subdirectory(libs/proto)
+add_subdirectory(libs/ptr_container)
+# add_subdirectory(libs/python)
+add_subdirectory(libs/qvm)
+add_subdirectory(libs/random)
+add_subdirectory(libs/range)
+add_subdirectory(libs/ratio)
+add_subdirectory(libs/rational)
+add_subdirectory(libs/regex)
+add_subdirectory(libs/safe_numerics)
+add_subdirectory(libs/scope_exit)
+add_subdirectory(libs/serialization)
+add_subdirectory(libs/signals2)
+add_subdirectory(libs/smart_ptr)
+add_subdirectory(libs/sort)
+add_subdirectory(libs/spirit)
+add_subdirectory(libs/stacktrace)
+add_subdirectory(libs/statechart)
+add_subdirectory(libs/static_assert)
+add_subdirectory(libs/static_string)
+add_subdirectory(libs/stl_interfaces)
+add_subdirectory(libs/system)
+add_subdirectory(libs/test)
+add_subdirectory(libs/thread)
+add_subdirectory(libs/throw_exception)
+add_subdirectory(libs/timer)
+add_subdirectory(libs/tokenizer)
+add_subdirectory(libs/tti)
+add_subdirectory(libs/tuple)
+add_subdirectory(libs/type_erasure)
+add_subdirectory(libs/type_index)
+add_subdirectory(libs/type_traits)
+add_subdirectory(libs/typeof)
+add_subdirectory(libs/units)
+add_subdirectory(libs/unordered)
+add_subdirectory(libs/utility)
+add_subdirectory(libs/uuid)
+add_subdirectory(libs/variant)
+add_subdirectory(libs/variant2)
+add_subdirectory(libs/vmd)
+add_subdirectory(libs/wave)
+add_subdirectory(libs/winapi)
+add_subdirectory(libs/xpressive)
+add_subdirectory(libs/yap)

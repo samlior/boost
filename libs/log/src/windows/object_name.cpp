@@ -28,8 +28,8 @@
 #include <windows.h>
 #include <lmcons.h>
 #include <security.h>
-#include "auto_handle.hpp"
-#include "utf_code_conversion.hpp"
+#include "windows/auto_handle.hpp"
+#include "windows/utf_code_conversion.hpp"
 #include <boost/log/detail/header.hpp>
 
 namespace boost {

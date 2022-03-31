@@ -4,6 +4,8 @@ project(Boost)
 
 find_package(MPI)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/include")
+
 include(CMakeDetermineASMCompiler)
 
 if(WIN32)

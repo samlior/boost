@@ -5,7 +5,7 @@ project(Boost)
 find_package(MPI)
 
 set(BUILD_TESTING	OFF)
-set(BOOST_ROOT	${CMAKE_CURRENT_SOURCE_DIR}/boost)
+set(BOOST_ROOT	${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/include")
 
 include(CMakeDetermineASMCompiler)
